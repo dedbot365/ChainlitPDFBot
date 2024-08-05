@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project demonstrates a sophisticated PDF processing and question-answering system using various Python libraries and frameworks. The system allows users to upload PDF documents, processes the text content, and enables users to ask questions based on the content of the uploaded documents. Additionally, it includes functionality for collecting user information through an interactive chat interface.
+This project demonstrates a sophisticated PDF processing and question-answering system using various Python libraries and frameworks. The system allows users to upload PDF documents, processes the text content, and enables users to ask questions based on the content of the uploaded documents. Additionally, it includes functionality for collecting user information through an interactive chat interface using Chainlit.
 
 ## Key Components
 
