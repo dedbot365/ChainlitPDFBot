@@ -53,7 +53,7 @@ This project demonstrates a sophisticated PDF processing and question-answering 
 4. **Collect User Information**:
    You can also trigger a sequence to collect user information by typing "call me".
    
-## Note:
+## Note
 This project assumes that you have a basic understanding of Python and virtual environments. For detailed usage of the libraries, please refer to their official documentation.
 
 
