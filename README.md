@@ -31,8 +31,12 @@ This project demonstrates a sophisticated PDF processing and question-answering 
    python -m venv venv
    source venv/bin/activate  # On Windows use `venv\Scripts\activate`       
 3. **Install the required packages**:
-  ```bash
-  pip install -r requirements.txt  #Use this to install the required packages
+     ```bash
+      pip install -r requirements.txt  #Use this to install the required packages
+4. **Configure environment variables**:
+   Create a .env file in the root directory of the project and add your Google API key:
+   ```bash
+      GOOGLE_API_KEY=your_google_api_key
 
 
 
