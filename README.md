@@ -35,8 +35,24 @@ This project demonstrates a sophisticated PDF processing and question-answering 
       pip install -r requirements.txt  #Use this to install the required packages
 4. **Configure environment variables**:
    Create a .env file in the root directory of the project and add your Google API key:
+
    ```bash
       GOOGLE_API_KEY=your_google_api_key
+
+## Usage
+### Running the Application
+1. **Start the application**:
+     ```bash
+      chainlit run main.py
+2. **Upload a PDF file**:
+   When prompted, upload a PDF file to begin the processing.
+
+3. **Ask Questions**:
+   Once the PDF processing is complete, you can ask questions based on the content of the uploaded document.
+
+4. **Collect User Information**:
+   You can also trigger a sequence to collect user information by typing "call me".
+
 
 
 
