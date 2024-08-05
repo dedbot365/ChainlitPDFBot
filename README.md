@@ -4,6 +4,8 @@
 
 This project demonstrates a sophisticated PDF processing and question-answering system using various Python libraries and frameworks. The system allows users to upload PDF documents, processes the text content, and enables users to ask questions based on the content of the uploaded documents. Additionally, it includes functionality for collecting user information through an interactive chat interface using Chainlit.
 
+https://zany-journey-6wv5w59qjphg4g-8000.app.github.dev/
+
 ## Key Components
 
 - **PDF Processing**: Extracts text from PDF files.
