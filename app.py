@@ -10,11 +10,21 @@ from langchain.prompts import PromptTemplate
 import chainlit as cl
 from dotenv import load_dotenv
 
-# Configure the API client
+# Load environment variables from a .env file and configure the Google API 
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 def get_pdf_text(pdf_docs):
+    """
+    Retrieves the text content from a list of PDF documents.
+
+    Args:
+        pdf_docs (List[str]): A list of paths to the PDF documents.
+
+    Returns:
+        str: The concatenated text content from all the PDF documents.
+    """
+    
     text = ""
     for pdf in pdf_docs:
         pdf_reader = PdfReader(pdf)
@@ -23,15 +33,39 @@ def get_pdf_text(pdf_docs):
     return text
 
 def get_text_chunks(text):
+    """
+    Splits the given text into chunks using the RecursiveCharacterTextSplitter.
+
+    Args:
+        text (str): The text to be split.
+
+    Returns:
+        list: A list of text chunks.
+    """
     splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=1000)
     return splitter.split_text(text)
 
 def get_vector_store(chunks):
+    """
+    Creates a vector store from the given chunks of text using GoogleGenerativeAIEmbeddings and FAISS.
+
+    Args:
+        chunks (List[str]): A list of text chunks from which to create the vector store.
+
+    Returns:
+        None: This function does not return anything. It saves the vector store locally as "faiss_index".
+    """
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
     vector_store = FAISS.from_texts(chunks, embedding=embeddings)
     vector_store.save_local("faiss_index")
 
 def get_conversational_chain():
+    """
+    Generates a conversational chain for answering questions.
+
+    Returns:
+        A conversational chain for answering questions.
+    """
     prompt_template = """
     Answer the question as detailed as possible from the provided context, make sure to provide all the details, if the answer is not in
     provided context just say, "answer is not available in the context", don't provide the wrong answer\n\n
@@ -46,10 +80,26 @@ def get_conversational_chain():
     return load_qa_chain(llm=model, chain_type="stuff", prompt=prompt)
 
 def clear_chat_history():
+    """
+    Clears the chat history by resetting the "messages" user session variable to a list containing a single dictionary with the role "assistant" and the content "Upload some PDFs and ask me a question".
+
+    This function does not take any parameters.
+
+    This function does not return anything.
+    """
     cl.user_session.set("messages", [{"role": "assistant", "content": "Upload some PDFs and ask me a question"}])
 
 
 def user_input(user_question):
+    """
+    Processes user input question through various steps involving embeddings, similarity search, and conversational chain to generate and return the output text response.
+    
+    Args:
+        user_question (str): The user input question to be processed.
+        
+    Returns:
+        str: The output text response generated based on the user input question.
+    """
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
     new_db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
     docs = new_db.similarity_search(user_question)
@@ -59,6 +109,17 @@ def user_input(user_question):
     return response['output_text']
 
 def save_user_info(name, phone, email):
+    """
+    Saves user information to a CSV file.
+
+    Args:
+        name (str): The user's name.
+        phone (str): The user's phone number.
+        email (str): The user's email address.
+
+    Returns:
+        None
+    """
     file_exists = os.path.isfile('user_info.csv')
     with open('user_info.csv', mode='a', newline='') as file:
         fieldnames = ['Name', 'Phone', 'Email']
@@ -69,6 +130,21 @@ def save_user_info(name, phone, email):
 
 @cl.on_chat_start
 async def on_chat_start():
+    """
+    This function is an event handler for the `on_chat_start` event in the `chainlit` library. It is triggered when a chat session starts.
+
+    The function prompts the user to upload a PDF file by sending a message with the content "Please upload a PDF file to begin!". It then waits for the user to upload a file until a file is successfully uploaded or the timeout of 180 seconds is reached.
+
+    Once a file is uploaded, the function processes the file by extracting the text content using the `get_pdf_text` function. It then splits the text into smaller chunks using the `get_text_chunks` function. Finally, it creates a vector store using the `get_vector_store` function.
+
+    After the file is processed, the function updates the message content to indicate that the processing is done and the user can now ask questions. It also clears the chat history.
+
+    Parameters:
+    None
+
+    Returns:
+    None
+    """
     files = None
     while files is None:
         files = await cl.AskFileMessage(
@@ -93,6 +169,25 @@ async def on_chat_start():
 
 @cl.on_message
 async def on_message(message: cl.Message):
+    """
+    This function handles incoming messages from the user.
+
+    It checks if the application is currently collecting user information.
+    If it is, the function processes the user's input to collect their name, phone number, and email address.
+    Once all the information is collected, it saves the user's information and sends a confirmation message.
+
+    If the application is not collecting user information, the function checks if the user's message contains the phrase "call me".
+    If it does, the function starts the process of collecting user information.
+
+    Otherwise, the function processes the user's message as a prompt, generates a response using the user_input function, and sends the response back to the user.
+    The user's message is also appended to the chat history.
+
+    Parameters:
+    message (cl.Message): The incoming message from the user.
+
+    Returns:
+    None
+    """
     collecting_info = cl.user_session.get("collecting_info", False)
 
     if collecting_info:
