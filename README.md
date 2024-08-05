@@ -44,7 +44,7 @@ This project demonstrates a sophisticated PDF processing and question-answering 
 ### Running the Application
 1. **Start the application**:
      ```bash
-      chainlit run main.py
+      chainlit run main.py -w
 2. **Upload a PDF file**:
    When prompted, upload a PDF file to begin the processing.
 
