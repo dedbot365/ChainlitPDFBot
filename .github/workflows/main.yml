@@ -30,4 +30,4 @@ jobs:
 
       - name: Run PDF Processing Script
         run: |
-          python your_script.py
+          chainlit run app.py -w
